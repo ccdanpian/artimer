@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Timer</title>
+    <link rel="stylesheet" href="../popup/popup.css">
+    <style>
+        body {
+            width: 100%;
+            height: 100vh;
+            max-width: none;
+            background: #000;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;  /* 居中显示 */
+            padding: 40px;   /* 增加内边距 */
+            background: none;
+            box-shadow: none;
+        }
 
+        /* 增大时钟字体 */
+        .time-display {
+            font-size: 5rem;  /* 更大的字体 */
+        }
+
+        /* 调整图片容器 */
+        .artwork-container {
+            height: 70vh;
+            max-width: 90%;  /* 限制最大宽度 */
+            margin: 0 auto;  /* 居中显示 */
+            border-radius: 20px;  /* 增加圆角 */
+        }
+
+        /* 确保倒计时控件正确显示 */
+        .timer-controls {
+            background: rgba(255, 255, 255, 0.1);  /* 半透明背景 */
+            max-width: 600px;  /* 限制最大宽度 */
+            margin: 20px auto;  /* 居中显示 */
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        /* 调整控制区域 */
+        .controls {
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        /* 调整按钮容器和加载动画 */
+        .button-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            width: fit-content;  /* 添加固定宽度 */
+            min-width: 140px;   /* 设置最小宽度，根据按钮实际宽度调整 */
+            justify-content: flex-start;  /* 左对齐内容 */
+        }
+
+        /* 覆盖默认的 loading-spinner 样式 */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+            position: static;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="time-display" id="timeDisplay">00:00:00</div>
+    <div class="artwork-container">
+        <img id="artwork" class="artwork" src="" alt="艺术作品" style="opacity: 0;">
+    </div>
+    <div class="controls">
+        <select id="modeSelect">
+            <option value="clock">时钟</option>
+            <option value="timer">倒计时</option>
+            <option value="stopwatch">秒表</option>
+        </select>
+        <select id="artworkInterval">
+            <option value="0">固定显示</option>
+            <option value="30">每30秒更换</option>
+            <option value="60">每分钟更换</option>
+            <option value="300">每5分钟更换</option>
+        </select>
+        <div class="button-container">
+            <button id="changeArtwork">更换作品</button>
+            <div id="loadingSpinner" class="loading-spinner"></div>
+        </div>
+    </div>
+    <div id="timerControls" class="timer-controls">
+        <div class="timer-inputs">
+            <div class="timer-input-group">
+                <input type="number" id="hours" class="timer-input" min="0" max="23" value="0">
+                <span class="timer-label">时</span>
+            </div>
+            <div class="timer-input-group">
+                <input type="number" id="minutes" class="timer-input" min="0" max="59" value="0">
+                <span class="timer-label">分</span>
+            </div>
+            <div class="timer-input-group">
+                <input type="number" id="seconds" class="timer-input" min="0" max="59" value="0">
+                <span class="timer-label">秒</span>
+            </div>
+        </div>
+        <div class="timer-buttons">
+            <button id="startTimer">开始</button>
+            <button id="pauseTimer">暂停</button>
+            <button id="resetTimer">重置</button>
+        </div>
+    </div>
+
+    <div id="stopwatchControls" class="timer-controls">
+        <div class="timer-buttons">
+            <button id="startStopwatch">开始</button>
+            <button id="pauseStopwatch">暂停</button>
+            <button id="resetStopwatch">重置</button>
+        </div>
+    </div>
+    <script src="../config/config.js"></script>
+    <script src="../popup/popup.js" defer></script>
+</body>
+</html> 
