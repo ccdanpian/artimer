@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Timer</title>
+    <link rel="stylesheet" href="popup.css">
+    <style>
+        /* 移除所有边框和背景 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent !important;
+            border: none !important;
+            overflow: hidden !important;
+        }
+
+        /* 确保窗口完全透明 */
+        :root {
+            background: transparent !important;
+        }
+
+        /* 调整按钮容器和加载动画 */
+        .button-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            width: fit-content;
+            min-width: 140px;
+            justify-content: flex-start;
+        }
+
+        /* 覆盖默认的 loading-spinner 样式 */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+            position: static;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .button-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            margin: 0;  /* 移除可能的外边距 */
+            transform: translateX(0);  /* 防止位移 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="time-display-container">
+            <div class="time-display" id="timeDisplay">00:00:00</div>
+        </div>
+        <div class="artwork-container">
+            <img id="artwork" class="artwork" src="" alt="艺术作品" style="opacity: 0;">
+        </div>
+        <div class="controls">
+            <select id="modeSelect">
+                <option value="clock">时钟</option>
+                <option value="timer">倒计时</option>
+                <option value="stopwatch">秒表</option>
+            </select>
+            <select id="artworkInterval">
+                <option value="0">固定显示</option>
+                <option value="30">每30秒更换</option>
+                <option value="60">每分钟更换</option>
+                <option value="300">每5分钟更换</option>
+            </select>
+            <div class="button-container">
+                <button id="changeArtwork">更换作品</button>
+                <div id="loadingSpinner" class="loading-spinner"></div>
+            </div>
+
+            <!-- 倒计时控制 -->
+            <div id="timerControls" class="timer-controls">
+                <div class="timer-inputs">
+                    <div class="timer-input-group">
+                        <input type="number" id="hours" class="timer-input" min="0" max="23" value="0">
+                        <span class="timer-label">时</span>
+                    </div>
+                    <div class="timer-input-group">
+                        <input type="number" id="minutes" class="timer-input" min="0" max="59" value="0">
+                        <span class="timer-label">分</span>
+                    </div>
+                    <div class="timer-input-group">
+                        <input type="number" id="seconds" class="timer-input" min="0" max="59" value="0">
+                        <span class="timer-label">秒</span>
+                    </div>
+                </div>
+                <div class="timer-buttons">
+                    <button id="startTimer">开始</button>
+                    <button id="pauseTimer">暂停</button>
+                    <button id="resetTimer">重置</button>
+                </div>
+            </div>
+
+            <!-- 秒表控制 -->
+            <div id="stopwatchControls" class="timer-controls">
+                <div class="timer-buttons">
+                    <button id="startStopwatch">开始</button>
+                    <button id="pauseStopwatch">暂停</button>
+                    <button id="resetStopwatch">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="context-menu" id="contextMenu" style="display: none;">
+            <div class="menu-item" id="toggleAlwaysOnTop">
+                <span class="menu-text">总是在前</span>
+                <span class="menu-check">✓</span>
+            </div>
+            <div class="menu-item" id="openInNewTab">
+                <span class="menu-text">在新标签页中打开</span>
+            </div>
+        </div>
+    </div>
+    <script src="../config/config.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html> 
