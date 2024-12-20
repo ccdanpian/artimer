@@ -188,38 +188,42 @@ function debounce(func, wait) {
 
 // 添加更新窗口大小的函数
 function updateWindowSize() {
-    const height = document.documentElement.scrollHeight;
-    chrome.windows.getCurrent().then(window => {
-        chrome.windows.update(window.id, {
-            height: height
+    // 确保在更新窗口大小之前，所有过渡效果都已完成
+    const container = document.querySelector('.container');
+    const computedStyle = window.getComputedStyle(container);
+    
+    // 等待一帧以确保样式已应用
+    requestAnimationFrame(() => {
+        const height = container.offsetHeight +
+                      parseInt(computedStyle.marginTop || 0) +
+                      parseInt(computedStyle.marginBottom || 0);
+        const titleBarHeight = 32;
+        
+        chrome.windows.getCurrent().then(window => {
+            chrome.windows.update(window.id, {
+                height: height + titleBarHeight
+            });
         });
     });
 }
 
-// 使用防抖包装更新函数
-const debouncedUpdateWindowSize = debounce(updateWindowSize, 100);
+// 使用较短的防抖时间
+const debouncedUpdateWindowSize = debounce(updateWindowSize, 50);
 
 // 事件监听器设置
 document.addEventListener('DOMContentLoaded', async () => {
-    // 检查是否是置顶窗口
     const urlParams = new URLSearchParams(window.location.search);
     const isAlwaysOnTop = urlParams.get('alwaysOnTop') === 'true';
     
     if (isAlwaysOnTop) {
-        // 为 html 和 body 都添加类名
         document.documentElement.classList.add('always-on-top');
         document.body.classList.add('always-on-top');
         
-        // 移除任何可能的固定高度样式
+        // 移除固定高度
         document.documentElement.style.height = 'auto';
         document.body.style.height = 'auto';
         
-        // 打印日志以确认类名已添加
-        console.log('Always on top mode enabled');
-        console.log('HTML classes:', document.documentElement.className);
-        console.log('Body classes:', document.body.className);
-        
-        // 创建 ResizeObserver 来监听内容变化
+        // 创建 ResizeObserver
         const resizeObserver = new ResizeObserver(() => {
             debouncedUpdateWindowSize();
         });
@@ -227,12 +231,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 观察 container 元素
         resizeObserver.observe(document.querySelector('.container'));
         
-        // 初始调整大小
-        setTimeout(updateWindowSize, 100);
+        // 监听模式切换
+        document.getElementById('modeSelect').addEventListener('change', (e) => {
+            const fromTimer = document.getElementById('timerControls').style.display === 'block';
+            const toClock = e.target.value === 'clock';
+            
+            if (fromTimer && toClock) {
+                // 从倒计时切换到时钟时的特殊处理
+                requestAnimationFrame(() => {
+                    // 确保倒计时控件完全隐藏
+                    document.getElementById('timerControls').style.display = 'none';
+                    // 强制重新计算布局
+                    document.body.style.display = 'none';
+                    document.body.offsetHeight;
+                    document.body.style.display = '';
+                    
+                    // 分多次更新确保正确
+                    updateWindowSize();
+                    setTimeout(updateWindowSize, 50);
+                    setTimeout(updateWindowSize, 150);
+                });
+            } else {
+                // 其他模式切换的正常处理
+                setTimeout(updateWindowSize, 50);
+            }
+        });
         
-        // 在模式切换时也更新窗口大小
-        document.getElementById('modeSelect').addEventListener('change', () => {
-            setTimeout(updateWindowSize, 300); // 给DOM时间更新
+        // 初始化时的处理
+        window.addEventListener('load', () => {
+            updateWindowSize();
+            setTimeout(updateWindowSize, 100);
         });
     }
     
