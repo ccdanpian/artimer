@@ -173,6 +173,32 @@ function setArtworkSrc(url) {
     artwork.style.opacity = '1';
 }
 
+// 在文件开头添加防抖函数
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// 添加更新窗口大小的函数
+function updateWindowSize() {
+    const height = document.documentElement.scrollHeight;
+    chrome.windows.getCurrent().then(window => {
+        chrome.windows.update(window.id, {
+            height: height
+        });
+    });
+}
+
+// 使用防抖包装更新函数
+const debouncedUpdateWindowSize = debounce(updateWindowSize, 100);
+
 // 事件监听器设置
 document.addEventListener('DOMContentLoaded', async () => {
     // 检查是否是置顶窗口
@@ -180,8 +206,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isAlwaysOnTop = urlParams.get('alwaysOnTop') === 'true';
     
     if (isAlwaysOnTop) {
-        // 为置顶窗口添加特定的类名
+        // 为 html 和 body 都添加类名
+        document.documentElement.classList.add('always-on-top');
         document.body.classList.add('always-on-top');
+        
+        // 移除任何可能的固定高度样式
+        document.documentElement.style.height = 'auto';
+        document.body.style.height = 'auto';
+        
+        // 打印日志以确认类名已添加
+        console.log('Always on top mode enabled');
+        console.log('HTML classes:', document.documentElement.className);
+        console.log('Body classes:', document.body.className);
+        
+        // 创建 ResizeObserver 来监听内容变化
+        const resizeObserver = new ResizeObserver(() => {
+            debouncedUpdateWindowSize();
+        });
+        
+        // 观察 container 元素
+        resizeObserver.observe(document.querySelector('.container'));
+        
+        // 初始调整大小
+        setTimeout(updateWindowSize, 100);
+        
+        // 在模式切换时也更新窗口大小
+        document.getElementById('modeSelect').addEventListener('change', () => {
+            setTimeout(updateWindowSize, 300); // 给DOM时间更新
+        });
     }
     
     // 检查当前页面类型

@@ -5,6 +5,7 @@ html, body {
     border: none !important;
     overflow: hidden !important;
     background: #000000 !important;
+    height: 100vh;
 }
 
 * {
@@ -305,4 +306,69 @@ button:active {
 @keyframes fadeIn {
     from { opacity: 0; transform: translate(-50%, 20px); }
     to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* 修改现有的置顶窗口样式 */
+html.always-on-top,
+body.always-on-top {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    position: relative !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+body.always-on-top {
+    width: auto !important;
+    min-width: 400px !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+}
+
+body.always-on-top .container {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+body.always-on-top .artwork-container {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 200px !important;
+    max-height: none !important;
+    position: relative !important;
+}
+
+/* 确保所有容器都是自适应的 */
+body.always-on-top .time-display-container,
+body.always-on-top .controls,
+body.always-on-top .timer-controls {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    position: relative !important;
+}
+
+/* 重置所有可能影响布局的属性 */
+body.always-on-top * {
+    max-height: none !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 隐藏所有滚动条 */
+body.always-on-top *::-webkit-scrollbar {
+    display: none !important;
 }
