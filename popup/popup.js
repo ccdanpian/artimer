@@ -216,8 +216,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isAlwaysOnTop = urlParams.get('alwaysOnTop') === 'true';
     
     if (isAlwaysOnTop) {
+        // 立即隐藏内容，等待完全加载后再显示
+        document.body.style.opacity = '0';
         document.documentElement.classList.add('always-on-top');
         document.body.classList.add('always-on-top');
+        
+        // 确保背景是黑色
+        document.documentElement.style.background = '#000000';
+        document.body.style.background = '#000000';
         
         // 移除固定高度
         document.documentElement.style.height = 'auto';
@@ -230,6 +236,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 观察 container 元素
         resizeObserver.observe(document.querySelector('.container'));
+        
+        // 等待所有资源加载完成
+        window.addEventListener('load', () => {
+            // 强制重新计算布局
+            document.body.style.display = 'none';
+            document.body.offsetHeight;
+            document.body.style.display = '';
+            
+            // 先更新窗口大小
+            updateWindowSize();
+            
+            // 确保布局稳定后再显示内容
+            setTimeout(() => {
+                // 添加更短的过渡效果
+                document.body.style.transition = 'opacity 0.08s ease-in';
+                document.body.style.opacity = '1';
+            }, 10); // 缩短等待时间
+        });
         
         // 监听模式切换
         document.getElementById('modeSelect').addEventListener('change', (e) => {
@@ -248,19 +272,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     
                     // 分多次更新确保正确
                     updateWindowSize();
-                    setTimeout(updateWindowSize, 50);
-                    setTimeout(updateWindowSize, 150);
+                    setTimeout(updateWindowSize, 10);
+                    setTimeout(updateWindowSize, 10);
                 });
             } else {
                 // 其他模式切换的正常处理
-                setTimeout(updateWindowSize, 50);
+                setTimeout(updateWindowSize, 10);
             }
         });
         
         // 初始化时的处理
         window.addEventListener('load', () => {
             updateWindowSize();
-            setTimeout(updateWindowSize, 100);
+            setTimeout(updateWindowSize, 20);
         });
     }
     
