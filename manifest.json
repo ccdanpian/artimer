@@ -1,33 +1,39 @@
 {
     "manifest_version": 3,
     "name": "Art Timer",
-    "version": "1.0",
-    "description": "An elegant art clock with random artwork display",
+    "version": "1.0.0",
+    "description": "An elegant art clock with timer and stopwatch. Displays Pixabay artwork to help you manage time and work breaks effectively.",
+    "author": "parrotai",
+    "homepage_url": "https://github.com/parrotai/arttimer",
     "permissions": [
         "storage",
         "alarms",
         "notifications",
-        "tabs",
         "contextMenus",
-        "windows",
         "system.display"
     ],
+    "optional_permissions": [
+        "tabs",
+        "windows"
+    ],
     "host_permissions": [
-        "https://pixabay.com/api/*"
+        "https://pixabay.com/*"
     ],
     "action": {
         "default_popup": "popup/popup.html",
         "default_icon": {
-            "16": "assets/icons/icon.svg"
+            "16": "assets/icons/icon16.png",
+            "48": "assets/icons/icon48.png",
+            "128": "assets/icons/icon128.png"
         }
     },
     "background": {
         "service_worker": "background/background.js"
     },
     "icons": {
-        "16": "assets/icons/icon.svg",
-        "48": "assets/icons/icon.svg",
-        "128": "assets/icons/icon.svg"
+        "16": "assets/icons/icon16.png",
+        "48": "assets/icons/icon48.png",
+        "128": "assets/icons/icon128.png"
     },
     "web_accessible_resources": [{
         "resources": [

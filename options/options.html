@@ -47,6 +47,9 @@
             background: #f5f5f5;
             border-radius: 4px;
         }
+        .option-item {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +58,12 @@
         <label for="pixabayKey">Pixabay API Key</label>
         <input type="text" id="pixabayKey" placeholder="请输入你的 API Key">
         <p class="help-text">需要 Pixabay API Key 来获取艺术作品</p>
+    </div>
+    <div class="option-item">
+        <label>
+            <input type="checkbox" id="notificationAlert">
+            启用桌面通知
+        </label>
     </div>
     <button id="save">保存设置</button>
     

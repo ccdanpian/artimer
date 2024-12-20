@@ -4,6 +4,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (storage.pixabayApiKey) {
         document.getElementById('pixabayKey').value = storage.pixabayApiKey;
     }
+
+    // 获取现有设置
+    chrome.storage.sync.get({
+        soundAlert: true,
+        notificationAlert: true
+    }, function(items) {
+        document.getElementById('soundAlert').checked = items.soundAlert;
+        document.getElementById('notificationAlert').checked = items.notificationAlert;
+    });
+
+    // 添加保存事件监听
+    document.getElementById('soundAlert').addEventListener('change', function(e) {
+        chrome.storage.sync.set({
+            soundAlert: e.target.checked
+        });
+    });
+
+    document.getElementById('notificationAlert').addEventListener('change', function(e) {
+        chrome.storage.sync.set({
+            notificationAlert: e.target.checked
+        });
+    });
 });
 
 document.getElementById('save').addEventListener('click', async () => {

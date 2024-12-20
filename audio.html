@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Player</title>
+</head>
+<body>
+    <audio id="alert" src="assets/alert.mp3" autoplay></audio>
+    <script>
+        document.getElementById('alert').onended = function() {
+            window.close();
+        };
+    </script>
+</body>
+</html> 
