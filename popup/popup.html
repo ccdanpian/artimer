@@ -51,6 +51,7 @@
         .controls {
             text-align: center;
             margin: 20px 0;
+            margin-bottom: 10px;
         }
 
         .button-container {
@@ -60,6 +61,28 @@
             position: relative;
             margin: 0;  /* 移除可能的外边距 */
             transform: translateX(0);  /* 防止位移 */
+        }
+
+        /* 为置顶窗口添加自适应样式 */
+        body.always-on-top {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        
+        body.always-on-top .container {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        
+        /* 如果有其他需要自适应的容器，也添加相应的样式 */
+        body.always-on-top .content-wrapper {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
         }
     </style>
 </head>

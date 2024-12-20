@@ -1,3 +1,21 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border: none !important;
+    overflow: hidden !important;
+    background: #000000 !important;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.content-wrapper {
+    max-height: 100%;
+    overflow: hidden;
+}
+
 html {
     background: transparent;
 }
@@ -5,7 +23,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background: #1a1a1a;
+    background: #000000 !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 14px;
     color: #fff;
@@ -13,7 +31,7 @@ body {
     height: auto;
     min-height: auto;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     user-select: none;
@@ -23,19 +41,26 @@ body {
 
 .container {
     text-align: center;
-    padding: 15px;
+    padding: 16px;
+    border: 0px;
     width: 100%;
+    height: 100%;
     box-sizing: border-box;
-    background: #000;
+    background: #000000 !important;
     border-radius: 8px;
-    overflow: visible;
+    overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     position: relative;
     margin: 0;
-    height: auto;
-    min-height: auto;
     display: flex;
     flex-direction: column;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .time-display {
@@ -58,9 +83,9 @@ body {
 }
 
 .artwork-container {
+    flex: 1;
+    min-height: 0;
     position: relative;
-    width: 100%;
-    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;

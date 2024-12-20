@@ -286,8 +286,7 @@ async function handleAlwaysOnTop(checked, width = 400, height = 550) {
         const popup = await chrome.windows.create({
             url: chrome.runtime.getURL('popup/popup.html?frameless=true&alwaysOnTop=true'),
             type: 'popup',
-            width: windowWidth,
-            height: windowHeight,
+            width: 400,
             focused: true,
             left: position.left,
             top: position.top,

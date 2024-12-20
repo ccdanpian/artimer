@@ -175,6 +175,15 @@ function setArtworkSrc(url) {
 
 // 事件监听器设置
 document.addEventListener('DOMContentLoaded', async () => {
+    // 检查是否是置顶窗口
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAlwaysOnTop = urlParams.get('alwaysOnTop') === 'true';
+    
+    if (isAlwaysOnTop) {
+        // 为置顶窗口添加特定的类名
+        document.body.classList.add('always-on-top');
+    }
+    
     // 检查当前页面类型
     const isPopup = document.getElementById('contextMenu') !== null;
     
@@ -224,37 +233,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 设置初始样式
-        const urlParams = new URLSearchParams(window.location.search);
-        const isAlwaysOnTop = urlParams.get('alwaysOnTop') === 'true';
+
         
-        // 计算初始高度
-        let initialHeight;
-        if (isAlwaysOnTop) {
-            switch (currentMode) {
-                case 'timer': initialHeight = 658; break;
-                case 'stopwatch': initialHeight = 600; break;
-                default: initialHeight = 520;
-            }
-        } else {
-            switch (currentMode) {
-                case 'timer': initialHeight = 600; break;
-                case 'stopwatch': initialHeight = 550; break;
-                default: initialHeight = 450;
-            }
-        }
-        
-        if (urlParams.get('frameless')) {
-            document.documentElement.style.background = 'transparent';
-            document.body.style.background = 'transparent';
-        }
-        
-        // 一次性设置所有窗口属性
-        await chrome.windows.update(currentWindow.id, {
-            left: Math.round(currentWindow.left),  // 确保位��是整数
-            width: 410,  // 固定宽度
-            height: initialHeight  // 使用计算好的高度
-        });
+
     }
 
     // 初始化显示模式
@@ -272,8 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 等待DOM完全渲染后再调整高度
         await new Promise(resolve => requestAnimationFrame(resolve));
         
-        // 只高度，不改变位置
-        await adjustWindowHeight();
+
 
         // 添加右键菜单事件监听器
         document.addEventListener('contextmenu', async (e) => {
@@ -288,7 +268,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 更新菜单项状态
             toggleItem.classList.toggle('checked', isAlwaysOnTop);
 
-            // 显示菜��
+            // 显示菜单
             contextMenu.style.display = 'block';
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.top = `${e.pageY}px`;
@@ -303,8 +283,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             await chrome.runtime.sendMessage({
                 type: 'toggleAlwaysOnTop',
                 value: !isAlwaysOnTop,
-                width: 410,     // 固定宽度
-                height: 520     // 固定高度
             });
 
             // 等待消息处理完成后再关闭窗口
@@ -336,6 +314,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 所有页面都需要执行的代码
     updateArtwork(true);
+
+    // 等待所有资源加载完成
+    window.addEventListener('load', () => {
+        // 强制重新计算布局
+        document.body.style.display = 'none';
+        document.body.offsetHeight; // 触发重排
+        document.body.style.display = '';
+        
+
+    });
 });
 
 // 修改modeSelect的事件监听器
@@ -348,8 +336,7 @@ document.getElementById('modeSelect').addEventListener('change', async (e) => {
     timerControls.style.display = currentMode === 'timer' ? 'block' : 'none';
     stopwatchControls.style.display = currentMode === 'stopwatch' ? 'block' : 'none';
     
-    // 使用统一的高度调整函数
-    await adjustWindowHeight();
+
     
     // 切换到计时器模式时，立即更新显示
     if (currentMode === 'timer' && timerRunning) {
@@ -481,50 +468,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-// 修改窗口高度调整函数
-async function adjustWindowHeight() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isAlwaysOnTop = urlParams.get('alwaysOnTop') === 'true';
-    
-    // 获取当前式
-    const currentMode = document.getElementById('modeSelect').value;
-    
-    // 根据是否置顶和当前模式设置不同的高度
-    let totalHeight;
-    if (isAlwaysOnTop) {
-        switch (currentMode) {
-            case 'timer': totalHeight = 658; break;
-            case 'stopwatch': totalHeight = 600; break;
-            default: totalHeight = 520;
-        }
-    } else {
-        switch (currentMode) {
-            case 'timer': totalHeight = 600; break;
-            case 'stopwatch': totalHeight = 550; break;
-            default: totalHeight = 450;
-        }
-    }
-    
-    try {
-        const window = await chrome.windows.getCurrent();
-        if (window && window.id) {
-            // 更新窗口高度
-            await chrome.windows.update(window.id, {
-                height: totalHeight
-            });
-            
-            // 同时新body和container的高度
-            document.body.style.height = `${totalHeight}px`;
-            document.querySelector('.container').style.height = `${totalHeight}px`;
-            
-            // 移除可能的滚动条
-            document.body.style.overflow = 'hidden';
-            document.querySelector('.container').style.overflow = 'hidden';
-        }
-    } catch (e) {
-        console.error('调整窗口高度时出错:', e);
-    }
-}
 
 // 添加以下代码来处理滚轮事件
 function setupWheelInputs() {
