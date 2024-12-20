@@ -25,12 +25,20 @@ function updateTime() {
             if (timerRunning && timerEndTime > 0) {
                 const remaining = Math.max(0, timerEndTime - Date.now());
                 display.textContent = formatTime(remaining);
+                
+                // 如果倒计时结束
+                if (remaining <= 0) {
+                    timerRunning = false;
+                    timerEndTime = 0;
+                }
             } else {
                 display.textContent = '00:00:00';
             }
             break;
         case 'stopwatch':
-            updateStopwatchDisplay();
+            if (!stopwatchRunning) {
+                display.textContent = formatTime(stopwatchElapsed);
+            }
             break;
     }
 }
@@ -119,7 +127,7 @@ async function updateArtwork(useCache = true, forceUpdate = false) {
         tempImg.style.height = '100%';
         tempImg.style.objectFit = 'contain';
         
-        // 等���图片加载完成
+        // 等待图片加载完成
         await new Promise((resolve, reject) => {
             tempImg.onload = resolve;
             tempImg.onerror = reject;
@@ -201,10 +209,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 恢复秒表状态
             if (response.stopwatch) {
                 stopwatchRunning = response.stopwatch.running;
-                stopwatchElapsed = response.stopwatch.elapsed;
-                stopwatchStart = response.stopwatch.startTime;
-                
                 if (stopwatchRunning) {
+                    // 如果秒表正在运行，立即计算当前值
+                    stopwatchElapsed = response.stopwatch.elapsed;
+                    stopwatchStart = response.stopwatch.startTime;
+                    const currentElapsed = stopwatchElapsed + (Date.now() - stopwatchStart);
+                    document.getElementById('timeDisplay').textContent = formatTime(currentElapsed);
+                    
                     currentMode = 'stopwatch';
                     document.getElementById('modeSelect').value = 'stopwatch';
                     document.getElementById('timerControls').style.display = 'none';
@@ -240,7 +251,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 一次性设置所有窗口属性
         await chrome.windows.update(currentWindow.id, {
-            left: Math.round(currentWindow.left),  // 确保位置是整数
+            left: Math.round(currentWindow.left),  // 确保位��是整数
             width: 410,  // 固定宽度
             height: initialHeight  // 使用计算好的高度
         });
@@ -277,7 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 更新菜单项状态
             toggleItem.classList.toggle('checked', isAlwaysOnTop);
 
-            // 显示菜单
+            // 显示菜��
             contextMenu.style.display = 'block';
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.top = `${e.pageY}px`;
@@ -340,7 +351,16 @@ document.getElementById('modeSelect').addEventListener('change', async (e) => {
     // 使用统一的高度调整函数
     await adjustWindowHeight();
     
-    resetAll();  // 使用resetAll替代状态同步
+    // 切换到计时器模式时，立即更新显示
+    if (currentMode === 'timer' && timerRunning) {
+        const remaining = Math.max(0, timerEndTime - Date.now());
+        document.getElementById('timeDisplay').textContent = formatTime(remaining);
+    }
+    // 切换到秒表模式时，立即更新显示
+    else if (currentMode === 'stopwatch' && stopwatchRunning) {
+        const elapsed = stopwatchElapsed + (Date.now() - stopwatchStart);
+        document.getElementById('timeDisplay').textContent = formatTime(elapsed);
+    }
 });
 
 // 继续添加事件监听器...
@@ -415,10 +435,9 @@ document.getElementById('resetTimer').addEventListener('click', () => {
 // 表控制
 document.getElementById('startStopwatch').addEventListener('click', () => {
     if (!stopwatchRunning) {
-        stopwatchStart = Date.now();
         stopwatchRunning = true;
         chrome.runtime.sendMessage({ type: 'startStopwatch' });
-        showPersistenceHint();  // 显示提示
+        showPersistenceHint();
     }
 });
 
@@ -427,6 +446,7 @@ document.getElementById('pauseStopwatch').addEventListener('click', () => {
         stopwatchRunning = false;
         stopwatchElapsed += Date.now() - stopwatchStart;
         chrome.runtime.sendMessage({ type: 'pauseStopwatch' });
+        updateStopwatchDisplay();
     }
 });
 
@@ -442,14 +462,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'timerComplete') {
         timerRunning = false;
         timerEndTime = 0;
-        updateTime();
+        if (currentMode === 'timer') {
+            updateTime();
+        }
     } else if (message.type === 'updateArtwork') {
         updateArtwork(false);
-    } else if (message.type === 'stopwatchUpdate') {
+    } else if (message.type === 'stopwatchUpdate' && currentMode === 'stopwatch') {
         stopwatchRunning = message.running;
         stopwatchElapsed = message.elapsed;
         stopwatchStart = message.start;
-        updateStopwatchDisplay();
+        document.getElementById('timeDisplay').textContent = formatTime(message.elapsed);
+    } else if (message.type === 'timerUpdate' && currentMode === 'timer') {
+        // 添加对计时器更新消息的处理
+        timerRunning = message.running;
+        timerEndTime = message.endTime;
+        const remaining = Math.max(0, timerEndTime - Date.now());
+        document.getElementById('timeDisplay').textContent = formatTime(remaining);
     }
 });
 
@@ -498,7 +526,7 @@ async function adjustWindowHeight() {
     }
 }
 
-// ��加以下代码来处理滚轮事件
+// 添加以下代码来处理滚轮事件
 function setupWheelInputs() {
     const hourInput = document.querySelector('.timer-input[data-unit="hours"]');
     const minuteInput = document.querySelector('.timer-input[data-unit="minutes"]');
@@ -527,19 +555,8 @@ function setupWheelInputs() {
 
 // 更新秒表显示
 function updateStopwatchDisplay() {
-    const display = document.getElementById('timeDisplay');
-    if (stopwatchRunning) {
-        const elapsed = stopwatchElapsed + (Date.now() - stopwatchStart);
-        display.textContent = formatTime(elapsed);
-        
-        // 定期同步状态到 background
-        chrome.runtime.sendMessage({
-            type: 'syncStopwatch',
-            elapsed: elapsed,
-            running: stopwatchRunning,
-            start: stopwatchStart
-        }).catch(() => {});
-    } else {
+    if (!stopwatchRunning) {
+        const display = document.getElementById('timeDisplay');
         display.textContent = formatTime(stopwatchElapsed);
     }
 }

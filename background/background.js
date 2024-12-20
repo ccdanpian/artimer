@@ -122,12 +122,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         console.error('Error creating notification:', error);
                     }
                     
-                    // 广播消息，不需要处理错误
+                    // 发送完成消息
                     chrome.runtime.sendMessage({
                         type: 'timerComplete'
                     }).catch(() => {});
+                } else {
+                    // 定期发送更新消息
+                    chrome.runtime.sendMessage({
+                        type: 'timerUpdate',
+                        running: true,
+                        endTime: timerState.timerEndTime
+                    }).catch(() => {});
                 }
-            }, 1000);
+            }, 100);  // 使用更高的更新频率
             break;
         case 'clearTimer':
             if (timerState.timerInterval) {
@@ -154,20 +161,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         case 'startStopwatch':
             timerState.stopwatch.running = true;
             timerState.stopwatch.startTime = Date.now();
+            timerState.stopwatch.elapsed = 0;  // 重置累计时间
+            
             // 开始秒表计时
+            if (timerState.stopwatch.interval) {
+                clearInterval(timerState.stopwatch.interval);
+            }
+            
             timerState.stopwatch.interval = setInterval(() => {
                 if (timerState.stopwatch.running) {
-                    const elapsed = timerState.stopwatch.elapsed + 
+                    const currentElapsed = timerState.stopwatch.elapsed + 
                         (Date.now() - timerState.stopwatch.startTime);
                     // 广播秒表更新
                     chrome.runtime.sendMessage({
                         type: 'stopwatchUpdate',
-                        elapsed: elapsed,
+                        elapsed: currentElapsed,
                         running: true,
                         start: timerState.stopwatch.startTime
                     }).catch(() => {});
                 }
-            }, 1000);
+            }, 100);  // 更新频率提高到 100ms
             break;
         case 'pauseStopwatch':
             timerState.stopwatch.running = false;
