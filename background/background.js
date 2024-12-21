@@ -197,6 +197,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 clearInterval(timerState.stopwatch.interval);
             }
             break;
+        case 'updateWindowSize':
+            // 只有在非置顶模式下才调整窗口大小
+            chrome.windows.getCurrent(async (window) => {
+                if (window.type === 'popup') {
+                    try {
+                        await chrome.windows.update(window.id, {
+                            width: message.width,
+                            height: message.height
+                        });
+                    } catch (e) {
+                        console.error('Failed to update window size:', e);
+                    }
+                }
+            });
+            break;
     }
 });
 
@@ -272,7 +287,7 @@ async function handleAlwaysOnTop(checked, width = 400, height = 550) {
         
         // 直接使用传入的尺寸，不需要额外添加边距
         const windowWidth = width;
-        const windowHeight = height;
+        // const windowHeight = height;
         const rightPosition = primaryDisplay.workArea.width - windowWidth - 20; // 距离右边缘20px
 
         // 获取保存的位置

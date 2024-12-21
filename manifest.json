@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "description": "An elegant art clock with timer and stopwatch. Displays Pixabay artwork to help you manage time and work breaks effectively.",
     "author": "parrotai",
-    "homepage_url": "https://github.com/parrotai/arttimer",
+    "homepage_url": "https://github.com/ccdanpian/artimer",
     "permissions": [
         "storage",
         "alarms",
