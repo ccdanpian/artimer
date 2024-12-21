@@ -6,13 +6,34 @@
     <title>Art Timer</title>
     <link rel="stylesheet" href="popup.css">
     <style>
-        /* 确保初始状态就是黑色 */
+        /* 确保初始状态的正确设置 */
         html, body {
             margin: 0;
             padding: 0;
             background: #000000 !important;
             border: none !important;
             overflow: hidden !important;
+            min-height: unset !important;  /* 移除最小高度限制 */
+            height: auto !important;       /* 允许高度自适应 */
+        }
+
+        /* 确保容器也能自适应高度 */
+        .container {
+            min-height: unset !important;  /* 移除最小高度限制 */
+            height: auto !important;       /* 允许高度自适应 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 确保内容区域也能自适应 */
+        .artwork-container {
+            flex: 0 0 auto;  /* 防止容器被拉伸 */
+            height: auto;    /* 允许高度自适应 */
+        }
+
+        /* 调整控制区域 */
+        .controls {
+            flex: 0 0 auto;  /* 防止控制区域被拉伸 */
         }
 
         /* 确保窗口完全黑色 */
@@ -59,7 +80,7 @@
             align-items: center;
             gap: 10px;
             position: relative;
-            margin: 0;  /* 移除可能的外边距 */
+            margin: 0;  /* 移除可能的外边��� */
             transform: translateX(0);  /* 防止位移 */
         }
 
@@ -83,6 +104,17 @@
             height: auto !important;
             min-height: 0 !important;
             max-height: none !important;
+        }
+
+        /* 调整时钟显示容器的间距 */
+        .time-display-container {
+            margin-bottom: 20px;  /* 添加底部间距 */
+            text-align: center;
+        }
+
+        /* 确保时钟显示本身也有合适的间距 */
+        .time-display {
+            margin-bottom: 20px;  /* 添加额外的底部间距 */
         }
     </style>
 </head>

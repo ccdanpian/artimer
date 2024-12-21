@@ -11,6 +11,11 @@
             height: 100vh;
             max-width: none;
             background: #000;
+            margin: 0;
+            display: flex;           /* 添加 flex 布局 */
+            flex-direction: column;  /* 垂直方向排列 */
+            align-items: center;     /* 水平居中 */
+            justify-content: center; /* 垂直居中 */
         }
         
         .container {
@@ -24,6 +29,8 @@
         /* 增大时钟字体 */
         .time-display {
             font-size: 5rem;  /* 更大的字体 */
+            margin-bottom: 2rem;    /* 添加底部间距 */
+            text-align: center;     /* 确保文字居中 */
         }
 
         /* 调整图片容器 */
@@ -47,6 +54,8 @@
         .controls {
             margin: 30px auto;
             max-width: 800px;
+            text-align: center;     /* 确保内容居中 */
+            width: 100%;           /* 确保宽度撑满 */
         }
 
         /* 调整按钮容器和加载动画 */
