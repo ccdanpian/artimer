@@ -24,11 +24,13 @@
         .button-container {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             position: relative;
             width: fit-content;
             min-width: 140px;
             justify-content: flex-start;
+            margin: 0;  /* 移除可能的外边距 */
+            transform: translateX(0);  /* 防止位移 */
         }
 
         /* 覆盖默认的 loading-spinner 样式 */
@@ -51,16 +53,8 @@
         .controls {
             text-align: center;
             margin: 10px 0;
+            margin-left: 0px;
             margin-bottom: 10px;
-        }
-
-        .button-container {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            margin: 0;  /* 移除可能的外边距 */
-            transform: translateX(0);  /* 防止位移 */
         }
 
         /* 为置顶窗口添加自适应样式 */

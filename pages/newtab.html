@@ -12,10 +12,12 @@
             max-width: none;
             background: #000;
             margin: 0;
-            display: flex;           /* 添加 flex 布局 */
-            flex-direction: column;  /* 垂直方向排列 */
-            align-items: center;     /* 水平居中 */
-            justify-content: center; /* 垂直居中 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 0px 0;  /* 添加上下内边距 */
         }
         
         .container {
@@ -29,33 +31,148 @@
         /* 增大时钟字体 */
         .time-display {
             font-size: 5rem;  /* 更大的字体 */
-            margin-bottom: 2rem;    /* 添加底部间距 */
-            text-align: center;     /* 确保文字居中 */
+            margin-top: 20px;  /* 增加顶部间距 */
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        /* 调整图片容器 */
+        /* 调整图片容器�����保不会与控制区重叠 */
         .artwork-container {
-            height: 70vh;
-            max-width: 90%;  /* 限制最大宽度 */
-            margin: 0 auto;  /* 居中显示 */
-            border-radius: 20px;  /* 增加圆角 */
+            flex: 1;
+            width: 100%;
+            max-height: calc(100vh - 238px);  /* 增加减去的高度，为控制区留出更多空间 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            overflow: hidden;
         }
 
-        /* 确保倒计时控件正确显示 */
-        .timer-controls {
-            background: rgba(255, 255, 255, 0.1);  /* 半透明背景 */
-            max-width: 600px;  /* 限制最大宽度 */
-            margin: 20px auto;  /* 居中显示 */
-            padding: 20px;
-            border-radius: 15px;
+        /* 调整图片样式 */
+        .artwork {
+            max-height: 100%;  /* 限制最大高度 */
+            max-width: 100%;   /* 限制最大宽度 */
+            object-fit: contain;  /* 保持比例完整显示 */
+            width: auto;         /* 自动宽度 */
+            height: auto;        /* 自动高度 */
         }
 
-        /* 调整控制区域 */
+        /* 控制区包装器 */
+        .controls-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            padding: 10px 0;
+        }
+
+        /* 计时器按钮容器 */
+        .timer-buttons {
+            display: flex;
+            justify-content: center;  /* 水平居中 */
+            gap: 10px;               /* 按钮之间的间距 */
+            margin-top: 10px;        /* 与上方输入框的间距 */
+        }
+
+        /* 底部控制按钮 */
         .controls {
-            margin: 30px auto;
+            width: 100%;
             max-width: 800px;
-            text-align: center;     /* 确保内容居中 */
-            width: 100%;           /* 确保宽度撑满 */
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;  /* 水平居中 */
+            align-items: center;      /* 垂直居中 */
+            gap: 10px;               /* 元素之间的间距 */
+        }
+
+        /* 计时器输入区域 */
+        .timer-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;          /* 稍微减小间距 */
+            margin-bottom: 12px;
+        }
+
+        .timer-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 时间输入框样式 */
+        .timer-input {
+            width: 40px;         /* 减小宽度，使其更窄 */
+            height: 40px;        /* 保持高度不变 */
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* 输入框获得焦点时的样式 */
+        .timer-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        /* 隐藏时间标签 */
+        .timer-label {
+            display: none;  /* 隐藏标签 */
+        }
+
+        /* 移除输入框的上下箭头 */
+        .timer-input::-webkit-inner-spin-button,
+        .timer-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .timer-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* 输入框占位符样式 */
+        .timer-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 计时器控件容器 */
+        .timer-controls {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        /* 更新选择器和按钮样式 */
+        select, .button-container {
+            margin: 5px 10px;  /* 增加间距 */
+        }
+
+        /* 更新控制区样式 */
+        .controls {
+            position: static;  /* 移除固定定位 */
+            transform: none;   /* 移除transform */
+            padding: 0;       /* 移除内边距 */
+            background: none; /* 移除背景色 */
+        }
+
+        /* 更新计时器控件样式 */
+        .timer-controls {
+            position: static;  /* 移除固定定位 */
+            transform: none;   /* 移除transform */
+            padding: 0;       /* 移除内边距 */
+            background: none; /* 移除背景色 */
+            margin-bottom: 30px;
         }
 
         /* 调整按钮容器和加载动画 */
@@ -92,50 +209,50 @@
     <div class="artwork-container">
         <img id="artwork" class="artwork" src="" alt="艺术作品" style="opacity: 0;">
     </div>
-    <div class="controls">
-        <select id="modeSelect">
-            <option value="clock">时钟</option>
-            <option value="timer">倒计时</option>
-            <option value="stopwatch">秒表</option>
-        </select>
-        <select id="artworkInterval">
-            <option value="0">固定显示</option>
-            <option value="30">每30秒更换</option>
-            <option value="60">每分钟更换</option>
-            <option value="300">每5分钟更换</option>
-        </select>
-        <div class="button-container">
-            <button id="changeArtwork">更换作品</button>
-            <div id="loadingSpinner" class="loading-spinner"></div>
-        </div>
-    </div>
-    <div id="timerControls" class="timer-controls">
-        <div class="timer-inputs">
-            <div class="timer-input-group">
-                <input type="number" id="hours" class="timer-input" min="0" max="23" value="0">
-                <span class="timer-label">时</span>
+    <div class="controls-wrapper">
+        <div id="timerControls" class="timer-controls">
+            <div class="timer-inputs">
+                <div class="timer-input-group">
+                    <input type="number" id="hours" class="timer-input" min="0" max="23" value="0" placeholder="00">
+                </div>
+                <div class="timer-input-group">
+                    <input type="number" id="minutes" class="timer-input" min="0" max="59" value="0" placeholder="00">
+                </div>
+                <div class="timer-input-group">
+                    <input type="number" id="seconds" class="timer-input" min="0" max="59" value="0" placeholder="00">
+                </div>
             </div>
-            <div class="timer-input-group">
-                <input type="number" id="minutes" class="timer-input" min="0" max="59" value="0">
-                <span class="timer-label">分</span>
-            </div>
-            <div class="timer-input-group">
-                <input type="number" id="seconds" class="timer-input" min="0" max="59" value="0">
-                <span class="timer-label">秒</span>
+            <div class="timer-buttons">
+                <button id="startTimer">开始</button>
+                <button id="pauseTimer">暂停</button>
+                <button id="resetTimer">重置</button>
             </div>
         </div>
-        <div class="timer-buttons">
-            <button id="startTimer">开始</button>
-            <button id="pauseTimer">暂停</button>
-            <button id="resetTimer">重置</button>
-        </div>
-    </div>
 
-    <div id="stopwatchControls" class="timer-controls">
-        <div class="timer-buttons">
-            <button id="startStopwatch">开始</button>
-            <button id="pauseStopwatch">暂停</button>
-            <button id="resetStopwatch">重置</button>
+        <div id="stopwatchControls" class="timer-controls">
+            <div class="timer-buttons">
+                <button id="startStopwatch">开始</button>
+                <button id="pauseStopwatch">暂停</button>
+                <button id="resetStopwatch">重置</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <select id="modeSelect">
+                <option value="clock">时钟</option>
+                <option value="timer">倒计时</option>
+                <option value="stopwatch">秒表</option>
+            </select>
+            <select id="artworkInterval">
+                <option value="0">固定显示</option>
+                <option value="30">每30秒更换</option>
+                <option value="60">每分钟更换</option>
+                <option value="300">每5分钟更换</option>
+            </select>
+            <div class="button-container">
+                <button id="changeArtwork">更换作品</button>
+                <div id="loadingSpinner" class="loading-spinner"></div>
+            </div>
         </div>
     </div>
     <script src="../config/config.js"></script>

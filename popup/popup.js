@@ -383,17 +383,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             const storage = await chrome.storage.local.get('alwaysOnTopWindowId');
             const isAlwaysOnTop = !!storage.alwaysOnTopWindowId;
             
-            // 先发送消息
+            // 使用 window.screenX/Y 获取当前窗口的屏幕坐标
+            const position = {
+                left: window.screenX,
+                top: window.screenY
+            };
+            
+            // 发送消息给 background script
             await chrome.runtime.sendMessage({
                 type: 'toggleAlwaysOnTop',
                 value: !isAlwaysOnTop,
+                position: position
             });
 
             // 等待消息处理完成后再关闭窗口
             if (!isAlwaysOnTop) {
                 setTimeout(() => {
                     window.close();
-                }, 20);  // 添加小延时确保消息处理完成
+                }, 20);
             }
 
             document.getElementById('contextMenu').style.display = 'none';
@@ -464,12 +471,12 @@ function resetAll() {
     updateTime();
 }
 
-// 图片更换间隔控制
+// 图片更换间控制
 document.getElementById('artworkInterval').addEventListener('change', async (e) => {
     const interval = parseInt(e.target.value);
     await chrome.storage.local.set({ [DISPLAY_MODE_KEY]: e.target.value });
     
-    // 发送消息给 background script 更新定时器
+    // 发送消息给 background script 更新定时
     chrome.runtime.sendMessage({
         type: 'updateInterval',
         interval: interval
@@ -643,5 +650,13 @@ function showPersistenceHint() {
         }, 300);
     }, 3000);
 }
+
+// 更新现有窗口大小
+chrome.windows.getCurrent((window) => {
+    chrome.windows.update(window.id, {
+        width: 460,
+        height: window.height  // 保持当前高度不变
+    });
+});
 
 
