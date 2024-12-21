@@ -19,7 +19,15 @@ window.config = {
         'fine+art+painting',
         'art+masterpiece',
         'famous+painting',
-        'renaissance+art'
+        'renaissance+art',
+        'art+painting',
+        'art+masterpiece',
+        'famous+painting',
+        'renaissance+art',
+        'art+painting',
+        'art+masterpiece',
+        'famous+painting',
+        'renaissance+art',
     ],
     
     // 其他 API 配置（可以添加其他图片源）
