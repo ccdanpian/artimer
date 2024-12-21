@@ -644,39 +644,4 @@ function showPersistenceHint() {
     }, 3000);
 }
 
-// 添加一个函数来更新窗口大小
-function updatePopupSize() {
-    // 获取实际内容高度
-    const containerHeight = document.querySelector('.container').offsetHeight;
-    
-    // 如果是 popup 模式（非置顶模式）
-    if (!document.body.classList.contains('always-on-top')) {
-        // 更新窗口高度
-        document.body.style.height = `${containerHeight}px`;
-        // 通知 background 更新窗口大小
-        chrome.runtime.sendMessage({
-            type: 'updateWindowSize',
-            width: 400,  // 保持固定宽度
-            height: containerHeight
-        });
-    }
-}
-
-// 在模式切换时调用更新
-document.getElementById('modeSelect').addEventListener('change', function(e) {
-    // ... 现有的模式切换代码 ...
-    
-    // 添加延时以等待 DOM 更新
-    setTimeout(updatePopupSize, 0);
-});
-
-// 在计时器控件显示/隐藏时也更新大小
-function toggleTimerControls(show) {
-    const timerControls = document.getElementById('timerControls');
-    timerControls.style.display = show ? 'block' : 'none';
-    
-    // 添加延时以等待 DOM 更新
-    setTimeout(updatePopupSize, 0);
-}
-
 

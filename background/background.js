@@ -197,21 +197,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 clearInterval(timerState.stopwatch.interval);
             }
             break;
-        case 'updateWindowSize':
-            // 只有在非置顶模式下才调整窗口大小
-            chrome.windows.getCurrent(async (window) => {
-                if (window.type === 'popup') {
-                    try {
-                        await chrome.windows.update(window.id, {
-                            width: message.width,
-                            height: message.height
-                        });
-                    } catch (e) {
-                        console.error('Failed to update window size:', e);
-                    }
-                }
-            });
-            break;
     }
 });
 
