@@ -6,12 +6,23 @@
     <title>Art Timer</title>
     <link rel="stylesheet" href="popup.css">
     <style>
-        /* 确保初始状态就是黑色 */
+        /* 设置固定大小 */
         html, body {
             margin: 0;
             padding: 0;
             background: #000000 !important;
             border: none !important;
+            overflow: hidden !important;
+            width: 400px !important;
+            height: 480px !important;
+            min-height: 480px !important;
+            max-height: 480px !important;
+        }
+
+        /* 确保容器也遵循相同的高度限制 */
+        .container {
+            height: 100% !important;
+            max-height: 480px !important;
             overflow: hidden !important;
         }
 
@@ -59,16 +70,16 @@
 
         /* 为置顶窗口添加自适应样式 */
         body.always-on-top {
-            height: auto !important;
-            min-height: 0 !important;
-            max-height: none !important;
+            height: 480px !important;
+            min-height: 480px !important;
+            max-height: 480px !important;
             overflow: visible !important;
         }
         
         body.always-on-top .container {
-            height: auto !important;
-            min-height: 0 !important;
-            max-height: none !important;
+            height: 480px !important;
+            min-height: 480px !important;
+            max-height: 480px !important;
             overflow: visible !important;
         }
         
@@ -78,6 +89,146 @@
             min-height: 0 !important;
             max-height: none !important;
         }
+
+        /* 控制区包装器 */
+        .controls-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+
+
+        /* 时间输入组样式 */
+        .timer-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;              /* 统一间距 */
+            margin-bottom: 12px;
+        }
+
+        .timer-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 时间输入框样式 */
+        .timer-input {
+            width: 40px;             /* 统一宽度 */
+            height: 40px;            /* 统一高度 */
+            background: rgba(255, 255, 255, 0.1);  /* 统一背景色 */
+            border: none;
+            border-radius: 6px;      /* 统一圆角 */
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+            padding: 0;              /* 移除内边距 */
+            transition: all 0.3s ease;
+        }
+
+        /* 输入框获得焦点时的样式 */
+        .timer-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        /* 移除输入框的上下箭头 */
+        .timer-input::-webkit-inner-spin-button,
+        .timer-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .timer-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* 计时器按钮容器 */
+        .timer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;              /* 统一间距 */
+            margin-top: 10px;
+        }
+
+        /* 底部控制按钮 */
+        .controls {
+            width: 100%;
+            max-width: 800px;
+            margin: 10px auto 0;    /* 只保留顶部外边距 */
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        /* 调整 artwork-container 的底部边距 */
+        .artwork-container {
+            max-height: 300px;  /* 限制图片容器高度 */
+            margin-bottom: 120px;  /* 减小底部边距 */
+            overflow: hidden;
+        }
+
+        /* 调整图片大小 */
+        .artwork {
+            max-height: 100%;
+            width: auto;
+            object-fit: contain;
+            cursor: pointer;  /* 指示可点击 */
+        }
+
+        /* 调整时间显示容器 */
+        .time-display-container {
+            margin: 10px 0;  /* 减小边距 */
+        }
+
+        /* 时间控件通用样式 */
+        button {
+            min-width: 80px;          /* 统一按钮最小宽度 */
+            height: 32px;             /* 统一按钮高度 */
+            padding: 0 16px;          /* 统一内边距 */
+            border: none;
+            border-radius: 6px;       /* 统一圆角 */
+            background: rgba(255, 255, 255, 0.1);  /* 统一背景色 */
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 下拉选择框样式 */
+        select {
+            min-width: 100px;         /* 统一选择框最小宽度 */
+            height: 32px;             /* 统一高度 */
+            padding: 0 12px;          /* 统一内边距 */
+            border: none;
+            border-radius: 6px;       /* 统一圆角 */
+            background: rgba(255, 255, 255, 0.1);  /* 统一背景色 */
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;         /* 移除默认样式 */
+            -webkit-appearance: none;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+
     </style>
 </head>
 <body>
@@ -88,37 +239,17 @@
         <div class="artwork-container">
             <img id="artwork" class="artwork" src="" alt="艺术作品" style="opacity: 0;">
         </div>
-        <div class="controls">
-            <select id="modeSelect">
-                <option value="clock">时钟</option>
-                <option value="timer">倒计时</option>
-                <option value="stopwatch">秒表</option>
-            </select>
-            <select id="artworkInterval">
-                <option value="0">固定显示</option>
-                <option value="30">每30秒更换</option>
-                <option value="60">每分钟更换</option>
-                <option value="300">每5分钟更换</option>
-            </select>
-            <div class="button-container">
-                <button id="changeArtwork">更换作品</button>
-                <div id="loadingSpinner" class="loading-spinner"></div>
-            </div>
-
-            <!-- 倒计时控制 -->
+        <div class="controls-wrapper">
             <div id="timerControls" class="timer-controls">
                 <div class="timer-inputs">
                     <div class="timer-input-group">
-                        <input type="number" id="hours" class="timer-input" min="0" max="23" value="0">
-                        <span class="timer-label">时</span>
+                        <input type="number" id="hours" class="timer-input" min="0" max="23" value="0" placeholder="00">
                     </div>
                     <div class="timer-input-group">
-                        <input type="number" id="minutes" class="timer-input" min="0" max="59" value="0">
-                        <span class="timer-label">分</span>
+                        <input type="number" id="minutes" class="timer-input" min="0" max="59" value="0" placeholder="00">
                     </div>
                     <div class="timer-input-group">
-                        <input type="number" id="seconds" class="timer-input" min="0" max="59" value="0">
-                        <span class="timer-label">秒</span>
+                        <input type="number" id="seconds" class="timer-input" min="0" max="59" value="0" placeholder="00">
                     </div>
                 </div>
                 <div class="timer-buttons">
@@ -128,12 +259,29 @@
                 </div>
             </div>
 
-            <!-- 秒表控制 -->
             <div id="stopwatchControls" class="timer-controls">
                 <div class="timer-buttons">
                     <button id="startStopwatch">开始</button>
                     <button id="pauseStopwatch">暂停</button>
                     <button id="resetStopwatch">重置</button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <select id="modeSelect">
+                    <option value="clock">时钟</option>
+                    <option value="timer">倒计时</option>
+                    <option value="stopwatch">秒表</option>
+                </select>
+                <select id="artworkInterval">
+                    <option value="0">固定显示</option>
+                    <option value="30">每30秒更换</option>
+                    <option value="60">每分钟更换</option>
+                    <option value="300">每5分钟更换</option>
+                </select>
+                <div class="button-container">
+                    <button id="changeArtwork">更换作品</button>
+                    <div id="loadingSpinner" class="loading-spinner"></div>
                 </div>
             </div>
         </div>

@@ -428,13 +428,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 等待所有资源加载完成
     window.addEventListener('load', () => {
-        // 强制重新计算布局
+        // 制重新计算布局
         document.body.style.display = 'none';
         document.body.offsetHeight; // 触发重排
         document.body.style.display = '';
         
 
     });
+
+    // 修改图片点击事件处理
+    document.getElementById('artwork').addEventListener('click', () => {
+        // 只在倒计时或秒表模式下处理
+        if (currentMode === 'timer' || currentMode === 'stopwatch') {
+            const timerControls = document.getElementById('timerControls');  // 获取倒计时控件容器
+            const stopwatchControls = document.getElementById('stopwatchControls');  // 获取秒表控件容器
+            const controls = currentMode === 'timer' ? timerControls : stopwatchControls;  // 根据当前模式选择容器
+            
+            // 如果当前是倒计时模式，则切换倒计时的显示，否则切换秒表的显示
+            if (currentMode === 'timer') {
+                timerControls.style.display = timerControls.style.display === 'none' ? 'block' : 'none';
+            } else {
+                stopwatchControls.style.display = stopwatchControls.style.display === 'none' ? 'block' : 'none';
+            }
+
+
+        }
+    });
+
+    // 在初始化时添加过渡效果
+    document.addEventListener('DOMContentLoaded', () => {
+        // 为时间控件添加过渡效果
+        const timerControls = document.querySelector('.timer-controls');
+        if (timerControls) {
+            timerControls.style.transition = 'all 0.3s ease';
+            timerControls.style.opacity = '1';
+            timerControls.style.pointerEvents = 'auto';
+        }
+    });
+
 });
 
 // 修改modeSelect的事件监听器
@@ -459,6 +490,11 @@ document.getElementById('modeSelect').addEventListener('change', async (e) => {
         const elapsed = stopwatchElapsed + (Date.now() - stopwatchStart);
         document.getElementById('timeDisplay').textContent = formatTime(elapsed);
     }
+
+    // 确保切换模式时控制区是可见的
+    const controlsWrapper = document.querySelector('.controls-wrapper');
+    controlsWrapper.style.opacity = '1';
+    controlsWrapper.style.pointerEvents = 'auto';
 });
 
 // 继续添加事件监听器...
@@ -619,7 +655,7 @@ function updateStopwatchDisplay() {
 function showPersistenceHint() {
     const hint = document.createElement('div');
     hint.className = 'persistence-hint';
-    hint.textContent = '秒表会在后台继续运行';
+    hint.textContent = '秒会在后台继续���行';
     hint.style.cssText = `
         position: fixed;
         bottom: 20px;
@@ -650,13 +686,5 @@ function showPersistenceHint() {
         }, 300);
     }, 3000);
 }
-
-// 更新现有窗口大小
-chrome.windows.getCurrent((window) => {
-    chrome.windows.update(window.id, {
-        width: 460,
-        height: window.height  // 保持当前高度不变
-    });
-});
 
 

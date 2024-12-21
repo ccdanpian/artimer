@@ -21,6 +21,9 @@
     ],
     "action": {
         "default_popup": "popup/popup.html",
+        "default_title": "Art Timer",
+        "default_height": 450,
+        "default_width": 400,
         "default_icon": {
             "16": "assets/icons/icon16.png",
             "48": "assets/icons/icon48.png",
