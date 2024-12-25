@@ -7,13 +7,11 @@
     "homepage_url": "https://github.com/ccdanpian/artimer",
     "permissions": [
         "storage",
-        "alarms",
         "notifications",
         "contextMenus",
         "system.display"
     ],
     "optional_permissions": [
-        "tabs",
         "windows"
     ],
     "host_permissions": [
